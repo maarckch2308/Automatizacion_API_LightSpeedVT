@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+
+    <style>
+        body {
+            background: url("/static/FONDO ADMIN.png") no-repeat center center fixed;
+            background-size: cover;
+            background-position: center -80px;
+            background-attachment: fixed;
+        }
+        .card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.9); 
+        }
+        .card:hover {
+            box-shadow: 0px 6px 15px rgba(0,0,0,0.2);
+        }
+    </style>
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Cursos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="icon" href="/static/favi.ico" type="image/x-icon">
+        <link rel="icon" href="/static/favi.ico" type="image/x-icon">
+</head>
+<body class="container mt-5">
+
+    <h1 class="mb-4 text-center">Gestión de Cursos</h1>
+
+    <!-- Botones de navegación -->
+    <div class="mb-4 text-start">
+        <a href="/" class="btn btn-secondary me-2">Volver al Panel Principal</a>
+        <a href="/gestion_usuarios" class="btn btn-dark">Ir a Gestión de Usuarios</a>
+    </div>
+
+    <!-- Subir Excel con userId para Asignar Roles -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Asignar Roles</h5>
+            <p class="card-text">Sube un archivo Excel con la columna <strong>userId</strong>. Todos los usuarios recibirán los roles seleccionados.</p>
+            <form method="POST" action="/roles" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="archivo" class="form-label">Selecciona tu archivo Excel</label>
+                    <input class="form-control" type="file" id="archivo" name="archivo" accept=".xlsx" required>
+                </div>
+
+                <!-- Select múltiple con búsqueda dinámica -->
+                <div class="mb-3">
+                    <label for="role_id" class="form-label">Seleccionar Cursos</label>
+                    <select class="form-select" id="role_id" name="role_id" multiple="multiple" required>
+                        {% for role in roles|sort(attribute='id', reverse=True) %}
+                            <option value="{{ role.id }}">{{ role.id }} - {{ role.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="expire_date" class="form-label">Fecha de Expiración de la Cuenta</label>
+                    <input type="date" class="form-control" id="expire_date" name="expire_date">
+                </div>
+
+                <button type="submit" class="btn btn-warning">Subir y Asignar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mensajes Flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} mt-4">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#role_id').select2({
+                placeholder: "Selecciona uno o varios cursos",
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Principal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="/static/favi.ico" type="image/x-icon">
+        <link rel="icon" href="/static/favi.ico" type="image/x-icon">
+    <style>
+        body {
+            background: url("/static/FONDO ADMIN.png") no-repeat center center fixed;
+            background-size: cover;
+            background-position: center -80px;
+            background-attachment: fixed;
+        }
+        .card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.9); 
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 6px 15px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="container py-5">
+
+    <h1 class="mb-5 text-center">Gestión de Usuarios</h1>
+
+        <div class="card mb-4 shadow-sm">
+        <div class="card-body text-center">
+            <h5 class="card-title">Exportar Usuarios</h5>
+            <p class="card-text">Descarga la lista de usuarios en formato Excel con las columnas 
+                <strong>userId</strong>, <strong>firstName</strong> y <strong>lastName</strong>.
+            </p>
+            <a href="/export_users" class="btn btn-success">Exportar Usuarios a Excel</a>
+        </div>
+    </div>
+
+
+    <div class="row g-4">
+        <!-- Gestión de Cursos -->
+        <div class="col-md-6">
+            <a href="/activar_usuarios" class="text-decoration-none text-dark">
+                <div class="card shadow-sm h-100 text-center">
+                    <div class="card-body">
+                        <h3 class="card-title">Activar/Inactivar Usuarios</h3>
+                        <p class="card-text">Administra usuarios para activar o inactivar cuentas.</p>
+                        <button class="btn btn-dark">Ir al Proceso</button>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Activar/Inactivar Usuarios -->
+        <div class="col-md-6">
+            <a href="/actualizar_usuarios" class="text-decoration-none text-dark">
+                <div class="card shadow-sm h-100 text-center">
+                    <div class="card-body">
+                        <h3 class="card-title">Actualización de correos de Usuarios</h3>
+                        <p class="card-text">Actualización de correos personales de usuarios.</p>
+                        <button class="btn btn-dark">Ir al Proceso</button>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- Renombrar Usuarios -->
+
+        <div class="col-md-6">
+            <a href="/renombrar_usuarios" class="text-decoration-none text-dark">
+                <div class="card shadow-sm h-100 text-center">
+                    <div class="card-body">
+                        <h3 class="card-title">Renombrar Usuarios</h3>
+                        <p class="card-text">Renombrar campos de Usuarios inactivos</p>
+                        <button class="btn btn-dark">Ir al Proceso</button>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Crear usuarios -->
+
+        <div class="col-md-6">
+            <a href="/crear_usuarios" class="text-decoration-none text-dark">
+                <div class="card shadow-sm h-100 text-center">
+                    <div class="card-body">
+                        <h3 class="card-title">Crear Usuarios</h3>
+                        <p class="card-text">Crear nuevos usuarios en el sistema.</p>
+                        <button class="btn btn-dark">Ir al Proceso</button>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+
+
+    </div>
+
+        <!-- Botones de navegación centrados -->
+    <div class="d-flex justify-content-center gap-2 mt-3">
+        <a href="/roles" class="btn btn-primary">Ir a Gestión de Cursos</a>
+        <a href="/" class="btn btn-secondary">Volver al Panel Principal</a>
+    </div>
+
+</body>
+</html>
