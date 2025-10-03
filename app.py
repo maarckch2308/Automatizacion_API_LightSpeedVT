@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 import os
 from requests.auth import HTTPBasicAuth
-from flask import Flask, render_template, request, redirect, url_for, flash, send_file
+from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, send_file
 from io import BytesIO
 from dotenv import load_dotenv 
 
@@ -395,6 +395,50 @@ def crear_usuarios(archivo, access_level=7, location_id=137980, default_password
 
     return creados, errores
 
+# ---------------------------
+# Función resetear contraseñas de usuarios
+# ---------------------------
+def resetear_passwords_masivo(df, new_password="Temp1234"):
+    actualizados = []
+    errores = []
+
+    for user_id in df["userId"].dropna().astype(int).tolist():
+        try:
+            # Consultar usuario
+            url_get = f"{BASE_URL}/users/{user_id}"
+            resp_get = requests.get(url_get, auth=HTTPBasicAuth(API_KEY, PASSWORD), verify=False)
+
+            if resp_get.status_code != 200:
+                errores.append((user_id, "No se pudo consultar"))
+                continue
+
+            user_data = resp_get.json()
+            username = user_data.get("username")
+
+            payload = {
+                "userId": user_id,
+                "username": username,
+                "password": new_password,
+                "locationId": user_data.get("locationId"),
+                "lockUsernamePassword": True,
+                "forcePasswordUpdate": True,
+                "isActive": True
+            }
+
+            url_put = f"{BASE_URL}/users"
+            resp_put = requests.put(url_put, json=payload, auth=HTTPBasicAuth(API_KEY, PASSWORD), verify=False)
+
+            if resp_put.status_code == 200:
+                actualizados.append(user_id)
+            else:
+                errores.append((user_id, resp_put.text))
+
+        except Exception as e:
+            errores.append((user_id, str(e)))
+
+    return actualizados, errores   # <-- 🔹 SOLO DOS VALORES
+
+
 
 # --------------------------------------------------- RUTAS ---------------------------------------------
 
@@ -618,6 +662,37 @@ def usuarios():
     )
 
 
+# ---------------------------
+# Ruta: Resetear contraseñas masivo
+# ---------------------------
+@app.route("/resetear_passwords", methods=["GET", "POST"])
+def resetear_passwords_route():
+    if request.method == "GET":
+        # Mostrar formulario
+        return render_template("resetear_passwords.html")
+
+    if "archivo" not in request.files:
+        flash("No se subió ningún archivo.", "danger")
+        return redirect(url_for("resetear_passwords_route"))
+
+    archivo = request.files["archivo"]
+
+    if archivo.filename == "":
+        flash("El archivo está vacío.", "danger")
+        return redirect(url_for("resetear_passwords_route"))
+
+    try:
+        df = pd.read_excel(archivo)
+        actualizados, errores = resetear_passwords_masivo(df)
+
+        flash(f"Se actualizaron {len(actualizados)} usuarios. Errores: {len(errores)}", "success")
+    except Exception as e:
+        flash(f"Error al procesar archivo: {e}", "danger")
+
+    return redirect(url_for("resetear_passwords_route"))
+
+
+
 
 # ---------------------------
 # Página principal: Home Page
@@ -632,3 +707,4 @@ def home():
 # ---------------------------
 if __name__ == "__main__":
     app.run(debug=True)
+    
